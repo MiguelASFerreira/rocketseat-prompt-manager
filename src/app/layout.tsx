@@ -24,7 +24,13 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${inter.variable} antialiased bg-gray-900 text-white`}
       >
-        {children}
+        <section className="flex h-screen">
+          <main className="relative flex-1 overflow-auto min-w-0">
+            <div className="p-4 sm:p-6 md:p-8 max-w-full md:max-w-3xl mx-auto h-full">
+              {children}
+            </div>
+          </main>
+        </section>
       </body>
     </html>
   );
