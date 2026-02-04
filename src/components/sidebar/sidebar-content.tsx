@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { startTransition, useState } from 'react';
 import { Button } from '../ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Logo } from '../logo';
 import { Input } from '../ui/input';
 
@@ -24,8 +24,10 @@ export type SidebarContentProps = {
 
 export const SidebarContent = ({ prompts }: SidebarContentProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
 
   const collapsedSidebar = () => setIsCollapsed(true);
   const expandSidebar = () => setIsCollapsed(false);
