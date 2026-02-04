@@ -11,13 +11,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Prompt {
-  id      String @id @default(uuid())
-  title   String @unique
-  content String
+  id        String   @id @default(uuid())
+  title     String   @unique
+  content   String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
