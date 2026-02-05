@@ -1,9 +1,10 @@
 'use server';
 
+import { prisma } from '@/lib/prisma';
+
 import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompts.use-case';
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity';
 import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository';
-import { prisma } from '@/lib/prisma';
 
 type SearchFormState = {
   success: boolean;
