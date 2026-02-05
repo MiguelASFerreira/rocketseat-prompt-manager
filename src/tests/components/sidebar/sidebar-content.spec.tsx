@@ -1,61 +1,64 @@
 import {
   SidebarContent,
-  type SidebarContentProps,
+  SidebarContentProps,
 } from '@/components/sidebar/sidebar-content';
 import { render, screen } from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 
 const pushMock = jest.fn();
-
 let mockSearchParams = new URLSearchParams();
-
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: pushMock,
-  }),
+  useRouter: () => ({ push: pushMock }),
   useSearchParams: () => mockSearchParams,
 }));
 
 const initialPrompts = [
   {
     id: '1',
-    title: 'Prompt 1',
-    content: 'Conteúdo do Prompt 1',
+    title: 'Title 01',
+    content: 'Content 01',
   },
 ];
 
 const makeSut = (
   { prompts = initialPrompts }: SidebarContentProps = {} as SidebarContentProps
 ) => {
-  render(<SidebarContent prompts={prompts} />);
+  return render(<SidebarContent prompts={prompts} />);
 };
 
 describe('SidebarContent', () => {
   const user = userEvent.setup();
 
-  describe('base', () => {
+  describe('Base', () => {
     it('deveria renderizar o botão para criar um novo prompt', () => {
       makeSut();
 
       expect(screen.getByRole('complementary')).toBeVisible();
-      expect(screen.getByRole('button', { name: 'Novo Prompt' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Novo prompt' })).toBeVisible();
     });
 
     it('deveria renderizar a lista de prompts', () => {
       const input = [
-        { id: '1', title: 'Prompt 1', content: 'Conteúdo do Prompt 1' },
-        { id: '2', title: 'Prompt 2', content: 'Conteúdo do Prompt 2' },
+        {
+          id: '1',
+          title: 'Example 01',
+          content: 'Content 01',
+        },
+        {
+          id: '2',
+          title: 'Example 02',
+          content: 'Content 02',
+        },
       ];
       makeSut({ prompts: input });
 
-      expect(screen.getByText(initialPrompts[0].title)).toBeInTheDocument();
+      expect(screen.getByText(input[0].title)).toBeInTheDocument();
       expect(screen.getAllByRole('paragraph')).toHaveLength(input.length);
     });
 
     it('deveria atualizar o campo de busca ao digitar', async () => {
-      const text = 'Prompt 1';
+      const text = 'AI';
       makeSut();
-
       const searchInput = screen.getByPlaceholderText('Buscar prompts...');
 
       await user.type(searchInput, text);
@@ -101,24 +104,24 @@ describe('SidebarContent', () => {
 
     it('deveria exibir o botão de criar um novo prompt na sidebar minimizada', async () => {
       makeSut();
-
       const collapseButton = screen.getByRole('button', {
         name: /minimizar sidebar/i,
       });
+
       await user.click(collapseButton);
 
       const newPromptButton = screen.getByRole('button', {
-        name: 'Novo Prompt',
+        name: 'Novo prompt',
       });
       expect(newPromptButton).toBeVisible();
     });
 
     it('não deveria exibir a lista de prompts na sidebar minimizada', async () => {
       makeSut();
-
       const collapseButton = screen.getByRole('button', {
         name: /minimizar sidebar/i,
       });
+
       await user.click(collapseButton);
 
       const nav = screen.queryByRole('navigation', {
@@ -129,10 +132,10 @@ describe('SidebarContent', () => {
   });
 
   describe('Novo Prompt', () => {
-    it('deveria navegar o usuário para a página de novo prompt', async () => {
+    it('deveria navegar o usuario para a paga de novo prompt /new', async () => {
       makeSut();
 
-      const newButton = screen.getByRole('button', { name: 'Novo Prompt' });
+      const newButton = screen.getByRole('button', { name: 'Novo prompt' });
 
       await user.click(newButton);
 
@@ -150,21 +153,20 @@ describe('SidebarContent', () => {
 
       expect(pushMock).toHaveBeenCalled();
       const lastCall = pushMock.mock.calls.at(-1);
-      expect(lastCall?.[0]).toBe('/q=A%20B');
+      expect(lastCall?.[0]).toBe('/?q=A%20B');
 
       await user.clear(searchInput);
       const lastClearCall = pushMock.mock.calls.at(-1);
       expect(lastClearCall?.[0]).toBe('/');
     });
-  });
+    it('deveria iniciar o campo de busca com o search param', () => {
+      const text = 'inicial';
+      const searchParams = new URLSearchParams(`q=${text}`);
+      mockSearchParams = searchParams;
+      makeSut();
+      const searchInput = screen.getByPlaceholderText('Buscar prompts...');
 
-  it('deveria iniar o campo de busca com o search param', () => {
-    const text = 'inicial';
-    const searchParams = new URLSearchParams(`q=${text}`);
-    mockSearchParams = searchParams;
-    makeSut();
-
-    const searchInput = screen.getByPlaceholderText('Buscar prompts...');
-    expect(searchInput).toHaveValue(text);
+      expect(searchInput).toHaveValue(text);
+    });
   });
 });
