@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { Toaster } from '@/components/ui/sonner';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -31,6 +32,8 @@ export default function RootLayout({
             {children}
           </div>
         </main>
+
+        <Toaster position="top-right" />
       </body>
     </html>
   );
