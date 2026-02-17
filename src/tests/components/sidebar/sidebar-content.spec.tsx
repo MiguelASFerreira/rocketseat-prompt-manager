@@ -2,8 +2,16 @@ import {
   SidebarContent,
   SidebarContentProps,
 } from '@/components/sidebar/sidebar-content';
-import { render, screen } from '@/lib/test-utils';
+import { render, screen, waitFor } from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
+
+jest.mock('react', () => {
+  const original = jest.requireActual('react');
+  return {
+    ...original,
+    useActionState: () => [{ success: true, prompts: [] }, jest.fn(), false],
+  };
+});
 
 const pushMock = jest.fn();
 let mockSearchParams = new URLSearchParams();
