@@ -23,10 +23,11 @@ jest.mock('@/core/application/prompts/create-prompts.use-case', () => ({
 describe('Server Actions: Prompts', () => {
   beforeEach(() => {
     mockedSearchExecute.mockReset();
+    mockedCreateExecute.mockReset();
   });
 
-  describe.only('createPromptAction', () => {
-    it('deve riar um prompt com sucesso', async () => {
+  describe('createPromptAction', () => {
+    it('deve criar um prompt com sucesso', async () => {
       const data = {
         title: 'New Prompt',
         content: 'Some content',
@@ -63,6 +64,19 @@ describe('Server Actions: Prompts', () => {
 
       expect(result?.success).toBe(false);
       expect(result?.message).toBe('Este prompt já existe');
+    });
+
+    it('deve retornar erro genérico quando a criação falhar', async () => {
+      mockedCreateExecute.mockRejectedValue(new Error('UNKNOWN_ERROR'));
+      const data = {
+        title: 'New Prompt',
+        content: 'Some content',
+      };
+
+      const result = await createPromptAction(data);
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('Falha ao criar o prompt');
     });
   });
 
