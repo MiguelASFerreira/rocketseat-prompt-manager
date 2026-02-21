@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem } from '../ui/form';
 import { createPromptAction } from '@/app/actions/prompt.actions';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { CopyButton } from '../button-actions';
 
 export const PromptForm = () => {
   const router = useRouter();
@@ -42,6 +43,7 @@ export const PromptForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
         <header className="flex flex-wrap gap-2 items-center mb-6 justify-end">
+          <CopyButton content={form.watch('content')} />
           <Button type="submit" size={'sm'}>
             Salvar
           </Button>
