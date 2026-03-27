@@ -9,11 +9,17 @@ import {
   createPromptSchema,
 } from '@/core/application/prompts/create-prompt.dto';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem } from '../ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '../ui/form';
 import { createPromptAction } from '@/app/actions/prompt.actions';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { CopyButton } from '../button-actions';
+import { CopyButton } from '../button-actions/copy-button';
 
 export const PromptForm = () => {
   const router = useRouter();
@@ -28,11 +34,10 @@ export const PromptForm = () => {
   const content = useWatch({
     control: form.control,
     name: 'content',
-  })
+  });
 
   const submit = async (data: CreatePromptDTO) => {
     const result = await createPromptAction(data);
-    console.log(result);
 
     if (!result.success) {
       toast.error(result.message);
@@ -67,6 +72,7 @@ export const PromptForm = () => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -84,6 +90,7 @@ export const PromptForm = () => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
