@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Check, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
-type CopyButtonProps = {
+export type CopyButtonProps = {
   content: string;
 };
 
