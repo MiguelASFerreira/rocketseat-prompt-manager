@@ -43,7 +43,7 @@ describe('PromptForm', () => {
     });
     makeSut();
 
-    const titleInput = screen.getByPlaceholderText('Título');
+    const titleInput = screen.getByPlaceholderText('Título do prompt');
     await user.type(titleInput, 'Meu Prompt de Teste');
     const contentInput = screen.getByPlaceholderText(
       'Digite o conteúdo do prompt...'
@@ -69,7 +69,7 @@ describe('PromptForm', () => {
     });
     makeSut();
 
-    const titleInput = screen.getByPlaceholderText('Título');
+    const titleInput = screen.getByPlaceholderText('Título do prompt');
     await user.type(titleInput, 'Meu Prompt de Teste');
     const contentInput = screen.getByPlaceholderText(
       'Digite o conteúdo do prompt...'
