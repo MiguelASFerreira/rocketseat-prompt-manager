@@ -33,6 +33,7 @@ describe('PromptForm', () => {
 
   beforeEach(() => {
     createActionMock.mockReset();
+    updateActionMock.mockReset();
     refreshMock.mockReset();
     (toast.success as jest.Mock).mockReset();
     (toast.error as jest.Mock).mockReset();
