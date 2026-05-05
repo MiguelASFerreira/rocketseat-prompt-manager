@@ -2,15 +2,20 @@
 
 import { prisma } from '@/lib/prisma';
 
-import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompts.use-case';
-import type { PromptSummary } from '@/core/domain/prompts/prompt.entity';
-import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository';
 import {
+  CreatePromptDTO,
   createPromptSchema,
-  type CreatePromptDTO,
 } from '@/core/application/prompts/create-prompt.dto';
-import z from 'zod';
 import { CreatePromptsUseCase } from '@/core/application/prompts/create-prompts.use-case';
+import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompts.use-case';
+import {
+  UpdatePromptDTO,
+  updatePromptDtoSchema,
+} from '@/core/application/prompts/update-prompt.dto';
+import { UpdatePromptUseCase } from '@/core/application/prompts/update-prompt.use-case';
+import { PromptSummary } from '@/core/domain/prompts/prompt.entity';
+import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository';
+import z from 'zod';
 
 type SearchFormState = {
   success: boolean;
@@ -18,7 +23,16 @@ type SearchFormState = {
   message?: string;
 };
 
-export async function createPromptAction(data: CreatePromptDTO) {
+type FormState = {
+  success: boolean;
+  prompts?: PromptSummary[];
+  message?: string;
+  errors?: unknown;
+};
+
+export async function createPromptAction(
+  data: CreatePromptDTO
+): Promise<FormState> {
   const validated = createPromptSchema.safeParse(data);
 
   if (!validated.success) {
@@ -33,11 +47,9 @@ export async function createPromptAction(data: CreatePromptDTO) {
   try {
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new CreatePromptsUseCase(repository);
-
     await useCase.execute(validated.data);
   } catch (error) {
     const _error = error as Error;
-
     if (_error.message === 'PROMPT_ALREADY_EXISTS') {
       return {
         success: false,
@@ -55,6 +67,45 @@ export async function createPromptAction(data: CreatePromptDTO) {
     success: true,
     message: 'Prompt criado com sucesso!',
   };
+}
+
+export async function updatePromptAction(
+  data: UpdatePromptDTO
+): Promise<FormState> {
+  const validated = updatePromptDtoSchema.safeParse(data);
+
+  if (!validated.success) {
+    const { fieldErrors } = z.flattenError(validated.error);
+    return {
+      success: false,
+      message: 'Erro de validação',
+      errors: fieldErrors,
+    };
+  }
+
+  try {
+    const repository = new PrismaPromptRepository(prisma);
+    const useCase = new UpdatePromptUseCase(repository);
+    await useCase.execute(validated.data);
+
+    return {
+      success: true,
+      message: 'Prompt atualizado com sucesso',
+    };
+  } catch (error) {
+    const _error = error as Error;
+    if (_error.message === 'PROMPT_NOT_FOUND') {
+      return {
+        success: false,
+        message: 'Prompt não encontrado',
+      };
+    }
+
+    return {
+      success: false,
+      message: 'Falha ao atualizar o prompt',
+    };
+  }
 }
 
 export async function searchPromptAction(
