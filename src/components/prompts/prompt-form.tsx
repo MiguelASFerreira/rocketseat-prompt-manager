@@ -65,7 +65,7 @@ export const PromptForm = () => {
             <FormItem>
               <FormControl>
                 <Input
-                  placeholder="Título"
+                  placeholder="Título do prompt"
                   variant={'transparent'}
                   size={'lg'}
                   autoFocus

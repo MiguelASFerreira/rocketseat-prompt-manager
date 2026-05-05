@@ -7,15 +7,15 @@ import { Spinner } from '../ui/spinner';
 
 export const Sidebar = async () => {
   const repository = new PrismaPromptRepository(prisma);
-  let initialPrompts: PromptSummary[] = []
+  let initialPrompts: PromptSummary[] = [];
 
   try {
-    const prompts = await repository.findMany()
+    const prompts = await repository.findMany();
     initialPrompts = prompts.map((prompt) => ({
-      ...prompt
-    }))
+      ...prompt,
+    }));
   } catch {
-    initialPrompts = []
+    initialPrompts = [];
   }
 
   return (
