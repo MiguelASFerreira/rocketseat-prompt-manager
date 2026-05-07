@@ -14,6 +14,11 @@ type PromptDelegateMock = {
       data: Partial<UpdatePromptDTO>;
     }) => Promise<Prompt>
   >;
+  delete: jest.MockedFunction<
+    (args: {
+      where: { id: string };
+    }) => Promise<void>
+  >;
   findFirst: jest.MockedFunction<
     (args: {
       where: { title: string };
@@ -46,6 +51,7 @@ function createMockPrisma() {
     prompt: {
       create: jest.fn(),
       update: jest.fn(),
+      delete: jest.fn(),
       findFirst: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),
@@ -154,6 +160,19 @@ describe('PrismaPromptRepository', () => {
       expect('title' in call.data).toBe(false);
     });
   });
+
+  describe('delete', () => {
+    it('deve chamar prisma.prompt.delete com where id', async () => {
+      const promptId = '1';
+      
+      await repository.delete(promptId);
+
+      expect(prisma.prompt.delete).toHaveBeenCalledWith({
+        where: { id: promptId },
+      });
+    });
+  });
+
 
   describe('findByTitle', () => {
     it('deve chamar corretamente o findFirst com o title', async () => {
