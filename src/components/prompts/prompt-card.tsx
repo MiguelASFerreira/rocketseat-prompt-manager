@@ -82,7 +82,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
                 {isDeleting && (
                   <LoadingIcon className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Confirmação remoção
+                Confirmar remoção
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
