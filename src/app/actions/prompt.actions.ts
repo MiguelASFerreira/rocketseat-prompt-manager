@@ -16,6 +16,7 @@ import { UpdatePromptUseCase } from '@/core/application/prompts/update-prompt.us
 import { PromptSummary } from '@/core/domain/prompts/prompt.entity';
 import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository';
 import z from 'zod';
+import { DeletePromptUseCase } from '@/core/application/prompts/delete-prompt.use-case';
 
 type SearchFormState = {
   success: boolean;

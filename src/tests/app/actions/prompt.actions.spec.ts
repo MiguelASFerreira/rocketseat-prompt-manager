@@ -1,19 +1,26 @@
 import {
   createPromptAction,
+  deletePromptAction,
   searchPromptAction,
   updatePromptAction,
 } from '@/app/actions/prompt.actions';
-import { title } from 'process';
 
 jest.mock('@/lib/prisma', () => ({ prisma: {} }));
 
 const mockedSearchExecute = jest.fn();
 const mockedCreateExecute = jest.fn();
 const mockedUpdateExecute = jest.fn();
+const mockedDeleteExecute = jest.fn();
 
 jest.mock('@/core/application/prompts/update-prompt.use-case', () => ({
   UpdatePromptUseCase: jest.fn().mockImplementation(() => ({
     execute: mockedUpdateExecute,
+  })),
+}));
+
+jest.mock('@/core/application/prompts/delete-prompt.use-case', () => ({
+  DeletePromptUseCase: jest.fn().mockImplementation(() => ({
+    execute: mockedDeleteExecute,
   })),
 }));
 
@@ -34,6 +41,7 @@ describe('Server Actions: Prompts', () => {
     mockedSearchExecute.mockReset();
     mockedCreateExecute.mockReset();
     mockedUpdateExecute.mockReset();
+    mockedDeleteExecute.mockReset();
   });
 
   describe('createPromptAction', () => {
@@ -151,6 +159,47 @@ describe('Server Actions: Prompts', () => {
       expect(result?.message).toBe('Falha ao atualizar o prompt');
     });
   });
+
+  describe('deletePromptAction', () => {
+    it('deve remover com sucesso', async () => {
+      mockedDeleteExecute.mockResolvedValue(undefined);
+      const promptId = '1';
+      const result = await deletePromptAction(promptId);
+
+      expect(result.success).toBe(true);
+      expect(result?.message).toBe('Prompt removido com sucesso!');
+    })
+
+    it('deve retornar erro quando o id for vazio', async () => {
+      const promptId = ''
+      const result = await deletePromptAction(promptId)
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('ID do prompt é obrigatório');
+    })
+
+    it('deve retornar erro quando o prompt não existir', async () => {
+      const errorMessage = 'PROMPT_NOT_FOUND'
+      mockedDeleteExecute.mockRejectedValue(new Error(errorMessage))
+      const promptId = '1'
+
+      const result = await deletePromptAction(promptId)
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('Prompt não encontrado');
+    })
+
+    it('deve retornar erro genérico quando a action falhar', async () => {
+      const errorMessage = 'UNKNOWN'
+      mockedDeleteExecute.mockRejectedValue(new Error(errorMessage))
+      const promptId = '1'
+
+      const result = await deletePromptAction(promptId)
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('Falha ao remover o prompt');
+    })
+  })
 
   describe('searchPromptsAction', () => {
     it('deve retornar sucesso com o termo de busca não vazio', async () => {
