@@ -65,10 +65,11 @@ describe('PromptCard', () => {
     expect(toast.success).toHaveBeenCalledWith('Prompt removido com sucesso!');
   });
 
-  it('deveria exibir um erro ao falhar na remoção', async () => {
+  it('deveria exibir erro quando a action falhar', async () => {
+    const errorMessage = 'Erro ao remover o prompt';
     deleteMock.mockResolvedValueOnce({
       success: false,
-      message: 'Erro ao remover o prompt',
+      message: errorMessage,
     });
     makeSut({ prompt });
 
@@ -82,6 +83,24 @@ describe('PromptCard', () => {
     });
     await user.click(confirmButton);
 
-    expect(toast.error).toHaveBeenCalledWith('Erro ao remover o prompt');
+    expect(toast.error).toHaveBeenCalledWith(errorMessage);
+  });
+
+  it('deve exibir erro quando a action lnhar uma exceção', async () => {
+    const errorMessage = 'Erro';
+    deleteMock.mockRejectedValueOnce(new Error(errorMessage));
+    makeSut({ prompt });
+
+    const deleteButton = screen.getByRole('button', {
+      name: /Remover Prompt/i,
+    });
+    await user.click(deleteButton);
+
+    const confirmButton = screen.getByRole('button', {
+      name: /Confirmação remoção/i,
+    });
+    await user.click(confirmButton);
+
+    expect(toast.error).toHaveBeenCalledWith(errorMessage);
   });
 });
